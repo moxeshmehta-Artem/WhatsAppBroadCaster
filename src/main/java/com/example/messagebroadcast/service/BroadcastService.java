@@ -31,7 +31,6 @@ public class BroadcastService {
     private final WhatsAppProviderRepository providerRepository;
     private final WhatsAppLogDetailRepository logDetailRepository;
 
-    @Transactional
     public WhatsAppLog processAndBroadcast(BroadcastRequestDTO requestDTO) {
         log.info("Processing broadcast request for mobile {}, using provider {}", requestDTO.getMobileNumber(), requestDTO.getProvider());
 
@@ -43,6 +42,8 @@ public class BroadcastService {
         String finalMessageContent = buildMessageFromTemplate(template.getContent(), requestDTO.getVariables());
 
         // 3. Select Provider
+
+        //Keep it in a factory resolver following SRP
         BroadcastProviderPlugin selectedProvider = providers.stream()
                 .filter(p -> p.getProviderName().equalsIgnoreCase(requestDTO.getProvider()))
                 .findFirst()

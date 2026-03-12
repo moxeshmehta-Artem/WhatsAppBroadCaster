@@ -15,3 +15,7 @@ public class BroadcastRequestDTO {
     private String provider; // "360dialog" or "infobip"
     private Map<String, String> variables; // Mapping for {{varName}} in template content, optional
 }
+//Provider must be an enum -> ProviderType
+//Infobip (isactive)
+
+
