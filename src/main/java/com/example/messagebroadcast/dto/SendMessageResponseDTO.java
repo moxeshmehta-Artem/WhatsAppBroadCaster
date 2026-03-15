@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class SendMessageResponseDTO {
     private boolean success;
     private String status;
+    private String messageId;
     private String errorDetails;
 }

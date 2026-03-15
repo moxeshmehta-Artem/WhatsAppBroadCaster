@@ -61,7 +61,8 @@ public class BroadcastService {
                 .mobileNo(requestDTO.getMobileNumber())
                 .template(template)
                 .provider(dbProvider)
-                .status(response.isSuccess() ? "SENT" : "FAILED")
+                .status(response.getStatus())
+                .externalMessageId(response.getMessageId())
                 .build();
 
         WhatsAppLog savedLog = logRepository.save(messageLog);

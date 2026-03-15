@@ -1,5 +1,6 @@
 package com.example.messagebroadcast.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,10 @@ public class WhatsAppLog {
 
     @Column(name = "status")
     private String status; // e.g., "SENT", "FAILED"
+    
+    @JsonProperty("externalMessageId")
+    @Column(name = "external_message_id")
+    private String externalMessageId;
 
     @OneToMany(mappedBy = "whatsAppLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WhatsAppLogDetail> details;

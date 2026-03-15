@@ -1,5 +1,7 @@
 package com.example.messagebroadcast.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.messagebroadcast.dto.SendMessageResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,8 @@ public class InfobipProviderPlugin implements BroadcastProviderPlugin {
 
     @Value("${app.provider.infobip.base-url}")
     private String baseUrl;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public SendMessageResponseDTO sendMessage(String mobileNumber, String messageContent) {
@@ -54,18 +58,29 @@ public class InfobipProviderPlugin implements BroadcastProviderPlugin {
 
         try {
             String url = baseUrl;
-            // Overwrite any old SMS URL with the new WhatsApp API path
-            if (url.endsWith("/sms/2/text/advanced")) {
-                url = url.replace("/sms/2/text/advanced", "");
-            }
+            // Ensure the URL always points to the official WhatsApp text API endpoint
             if (!url.endsWith("/whatsapp/1/message/text")) {
                 url = url.endsWith("/") ? url + "whatsapp/1/message/text" : url + "/whatsapp/1/message/text";
             }
             ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-            return new SendMessageResponseDTO(true, "SENT_VIA_INFOBIP", "Response: " + response.getBody());
+            
+            String messageId = null;
+            try {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                if (root.has("messages") && root.get("messages").isArray() && root.get("messages").size() > 0) {
+                    messageId = root.get("messages").get(0).get("messageId").asText();
+                }
+            } catch (Exception e) {
+                log.warn("Failed to parse Infobip messageId: {}", e.getMessage());
+            }
+
+            return new SendMessageResponseDTO(true, "SENT_VIA_INFOBIP", messageId, "Response: " + response.getBody());
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            log.error("API Error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return new SendMessageResponseDTO(false, "API_ERROR", null, e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send Infobip message: ", e);
-            return new SendMessageResponseDTO(false, "FAILED_INFOBIP", e.getMessage());
+            return new SendMessageResponseDTO(false, "FAILED_INFOBIP", null, e.getMessage());
         }
     }
 

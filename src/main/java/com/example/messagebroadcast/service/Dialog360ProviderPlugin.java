@@ -1,5 +1,7 @@
 package com.example.messagebroadcast.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.example.messagebroadcast.dto.SendMessageResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +24,8 @@ public class Dialog360ProviderPlugin implements BroadcastProviderPlugin {
 
     @Value("${app.provider.360dialog.base-url}")
     private String baseUrl;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public SendMessageResponseDTO sendMessage(String mobileNumber, String messageContent) {
@@ -56,13 +60,24 @@ public class Dialog360ProviderPlugin implements BroadcastProviderPlugin {
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, request, String.class);
-            return new SendMessageResponseDTO(true, "SENT_VIA_360DIALOG", "Response: " + response.getBody());
+            
+            String messageId = null;
+            try {
+                JsonNode root = objectMapper.readTree(response.getBody());
+                if (root.has("messages") && root.get("messages").isArray() && root.get("messages").size() > 0) {
+                    messageId = root.get("messages").get(0).get("id").asText();
+                }
+            } catch (Exception e) {
+                log.warn("Failed to parse 360dialog messageId: {}", e.getMessage());
+            }
+
+            return new SendMessageResponseDTO(true, "SENT_VIA_360DIALOG", messageId, "Response: " + response.getBody());
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("Failed to send 360dialog message. HTTP STATUS: " + e.getStatusCode() + " BODY: " + e.getResponseBodyAsString());
-            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", "HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", null, "HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send 360dialog message: ", e);
-            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", e.getMessage());
+            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", null, e.getMessage());
         }
     }
 
