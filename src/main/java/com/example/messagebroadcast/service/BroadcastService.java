@@ -49,7 +49,7 @@ public class BroadcastService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported provider: " + requestDTO.getProvider()));
 
-        // 3.1 Fetch Provider Entity from DB (for normalization)
+        // 3.1 Fetch Provider Entity buildMessageFromTemplatefrom DB (for normalization)
         WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCase(selectedProvider.getProviderName())
                 .orElseThrow(() -> new IllegalArgumentException("Provider not found in DB: " + selectedProvider.getProviderName()));
 
