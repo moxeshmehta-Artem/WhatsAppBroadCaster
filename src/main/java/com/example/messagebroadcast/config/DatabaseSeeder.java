@@ -15,9 +15,15 @@ public class DatabaseSeeder {
         return args -> {
             // Seed Providers
             if (providerRepo.count() == 0) {
-                providerRepo.save(com.example.messagebroadcast.entity.WhatsAppProvider.builder().providerName("INFOBIP").build());
-                providerRepo.save(com.example.messagebroadcast.entity.WhatsAppProvider.builder().providerName("360DIALOG").build());
-                System.out.println("✅ Seeded WhatsApp Providers!");
+                providerRepo.save(com.example.messagebroadcast.entity.WhatsAppProvider.builder()
+                        .providerName("INFOBIP")
+                        .status(com.example.messagebroadcast.enums.ProviderStatus.ACTIVE)
+                        .build());
+                providerRepo.save(com.example.messagebroadcast.entity.WhatsAppProvider.builder()
+                        .providerName("360DIALOG")
+                        .status(com.example.messagebroadcast.enums.ProviderStatus.ACTIVE)
+                        .build());
+                System.out.println(" Seeded WhatsApp Providers!");
             }
 
             // Seed Templates
@@ -34,7 +40,7 @@ public class DatabaseSeeder {
                 
                 templateRepo.save(template);
                 System.out.println("=====================================================");
-                System.out.println("✅ Automatically created 'MedicalCamp' template in DB!");
+                System.out.println("Automatically created 'MedicalCamp' template in DB!");
                 System.out.println("Template ID: " + template.getId());
                 System.out.println("=====================================================");
             }

@@ -4,21 +4,19 @@ import com.example.messagebroadcast.dto.BroadcastRequestDTO;
 import com.example.messagebroadcast.dto.SendMessageResponseDTO;
 import com.example.messagebroadcast.entity.WhatsAppLog;
 import com.example.messagebroadcast.entity.WhatsAppTemp;
+import com.example.messagebroadcast.entity.WhatsAppProvider;
+import com.example.messagebroadcast.entity.WhatsAppLogDetail;
+import com.example.messagebroadcast.enums.ProviderStatus;
 import com.example.messagebroadcast.repository.WhatsAppLogRepository;
 import com.example.messagebroadcast.repository.WhatsAppTemplateRepository;
+import com.example.messagebroadcast.repository.WhatsAppProviderRepository;
+import com.example.messagebroadcast.repository.WhatsAppLogDetailRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.example.messagebroadcast.repository.WhatsAppProviderRepository;
-import com.example.messagebroadcast.entity.WhatsAppProvider;
-import com.example.messagebroadcast.entity.WhatsAppLogDetail;
-import com.example.messagebroadcast.repository.WhatsAppLogDetailRepository;
-
 
 import java.util.List;
 import java.util.Map;
-
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +47,9 @@ public class BroadcastService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported provider: " + requestDTO.getProvider()));
 
-        // 3.1 Fetch Provider Entity buildMessageFromTemplatefrom DB (for normalization)
-        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCase(selectedProvider.getProviderName())
-                .orElseThrow(() -> new IllegalArgumentException("Provider not found in DB: " + selectedProvider.getProviderName()));
+        // 3.1 Fetch Provider Entity and check if it is active
+        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCaseAndStatus(selectedProvider.getProviderName(), ProviderStatus.ACTIVE)
+                .orElseThrow(() -> new IllegalArgumentException("Provider not found or is INACTIVE: " + selectedProvider.getProviderName()));
 
         // 4. Send Message via Provider API
         SendMessageResponseDTO response = selectedProvider.sendMessage(requestDTO.getMobileNumber(), finalMessageContent);

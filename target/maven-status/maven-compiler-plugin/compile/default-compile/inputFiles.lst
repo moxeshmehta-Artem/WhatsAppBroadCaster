@@ -1,7 +1,9 @@
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/repository/WhatsAppLogRepository.java
+/home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/enums/ProviderType.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/entity/WhatsAppTemp.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/config/DatabaseSeeder.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/controller/WebhookController.java
+/home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/enums/ProviderStatus.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/service/BroadcastProviderPlugin.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/entity/WhatsAppLogDetail.java
 /home/artem/Desktop/Backend/Message_Broadcast/src/main/java/com/example/messagebroadcast/MessageBroadcastApplication.java
