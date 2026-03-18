@@ -1,0 +1,52 @@
+// Brand Color Variables
+$primary-color: #1e293b; 
+$highlight-color: #38bdf8;
+$text-light: #cbd5e1;
+$hover-color: #334155;
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: $primary-color;
+  padding: 1rem 3rem;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+
+  .logo h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $highlight-color;
+    cursor: pointer;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+
+    li {
+      
+      a {
+        text-decoration: none;
+        color: $text-light;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+
+        // SCSS nested hover effect!
+        &:hover {
+          background-color: $hover-color;
+          color: $highlight-color;
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
