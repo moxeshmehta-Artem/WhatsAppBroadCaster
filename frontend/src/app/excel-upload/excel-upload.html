@@ -1,0 +1,29 @@
+<div class="upload-container">
+  <div class="upload-card">
+    
+    <div class="card-header">
+      <h2>🚀 Start a New Campaign</h2>
+      <p>Upload an Excel file (.xlsx or .csv) containing your phone numbers to blast.</p>
+    </div>
+
+    <!-- The physical upload box -->
+    <div class="file-dropzone">
+      <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".xlsx, .csv" hidden>
+      <label for="fileInput" class="upload-label">
+        <span class="icon">📁</span>
+        <span class="instruction"><strong>Click here</strong> to select an Excel file</span>
+        
+        <!-- This will magically show the filename if the user selects one! -->
+        @if (selectedFileName) {
+          <span class="file-name">Selected: {{ selectedFileName }}</span>
+        }
+      </label>
+    </div>
+
+    <!-- The Action Button. We disable it until they definitely select a file -->
+    <button class="blast-btn" [disabled]="!selectedFile" (click)="onUploadClick()">
+      Launch WhatsApp Blast
+    </button>
+
+  </div>
+</div>

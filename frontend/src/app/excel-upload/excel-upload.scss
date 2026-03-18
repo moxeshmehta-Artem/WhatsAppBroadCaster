@@ -1,0 +1,99 @@
+.upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.upload-card {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  padding: 3rem;
+  text-align: center;
+}
+
+.card-header h2 {
+  font-size: 2rem;
+  color: #0f172a;
+  margin-top: 0;
+}
+
+.card-header p {
+  color: #64748b;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* The File Choice Box */
+.file-dropzone {
+  margin-bottom: 2rem;
+}
+
+.upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  border: 2px dashed #94a3b8;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #38bdf8;
+    background-color: #f0f9ff;
+    transform: scale(1.02);
+  }
+
+  .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .instruction {
+    font-size: 1.2rem;
+    color: #475569;
+    strong { color: #0284c7; }
+  }
+
+  .file-name {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+}
+
+/* The Action Button */
+.blast-btn {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  background-color: #22c55e; /* Green for GO! */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #16a34a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+  }
+
+  &:disabled {
+    background-color: #cbd5e1;
+    cursor: not-allowed;
+  }
+}
