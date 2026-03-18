@@ -42,8 +42,8 @@ public class WhatsAppLog {
     @Column(name = "external_message_id")
     private String externalMessageId;
 
-    @OneToMany(mappedBy = "whatsAppLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<WhatsAppLogDetail> details;
+    // @OneToMany(mappedBy = "whatsAppLog", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // private List<WhatsAppLogDetail> details;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
