@@ -1,0 +1,86 @@
+.template-container {
+  padding: 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.template-card {
+  background: white;
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  padding: 3rem;
+  border: 1px solid #e2e8f0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h2 { margin: 0; color: #0f172a; }
+  
+  .new-btn {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    &:hover { background: #0284c7; transform: translateY(-2px); }
+  }
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  font-size: 0.95em;
+
+  thead tr {
+    background-color: #f8fafc;
+    color: #475569;
+    text-align: left;
+  }
+
+  th, td { padding: 1rem; border-bottom: 1px solid #e2e8f0; }
+  
+  tbody tr {
+    transition: background 0.2s;
+    &:hover { background-color: #f1f5f9; }
+  }
+
+  .content-col {
+    color: #64748b;
+    font-size: 0.9rem;
+    max-width: 300px;
+  }
+}
+
+/* Status Badges */
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.badge-success { background: #dcfce7; color: #16a34a; }
+.badge-warning { background: #fef08a; color: #ca8a04; }
+.badge-danger  { background: #fee2e2; color: #dc2626; }
+
+.action-btn {
+  background: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer;
+  color: #475569;
+  transition: 0.2s;
+  &:hover { border-color: #94a3b8; background: #f8fafc; }
+}

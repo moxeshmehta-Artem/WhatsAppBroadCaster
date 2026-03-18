@@ -1,0 +1,38 @@
+<div class="template-container">
+  <div class="template-card">
+    
+    <div class="card-header">
+      <h2>📋 WhatsApp Templates</h2>
+      <button class="new-btn">+ New Template</button>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Message Content</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop over our data dynamically! -->
+        @for (template of templates; track template.id) {
+          <tr>
+            <td><strong>{{ template.name }}</strong></td>
+            <td class="content-col">{{ template.content }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(template.status)">
+                {{ template.status }}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn">Edit</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+  </div>
+</div>
