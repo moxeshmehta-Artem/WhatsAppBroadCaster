@@ -29,6 +29,11 @@ public class ExcelParserService {
                             // A real phone number is usually between 10 to 15 digits!
                             if (cleanedNumber.length() >= 10 && cleanedNumber.length() <= 15) {
                                 phoneNumbers.add(cleanedNumber);
+                                
+                                // SECURITY GUARD: Hard Limit of 10k contacts!
+                                if (phoneNumbers.size() > 10000) {
+                                    throw new IllegalArgumentException("REJECTED: CSV file exceeds the 10,000 contact limit. Please split it into smaller files.");
+                                }
                                 break; // Found it for this row! Move to next row.
                             }
                         }
@@ -68,6 +73,11 @@ public class ExcelParserService {
                         // Valid Phone Numbers typically fall in the 10-15 character range.
                         if (cleanedNumber.length() >= 10 && cleanedNumber.length() <= 15) {
                             phoneNumbers.add(cleanedNumber);
+
+                            // SECURITY GUARD: Hard Limit of 10k contacts!
+                            if (phoneNumbers.size() > 10000) {
+                                throw new IllegalArgumentException("REJECTED: Excel file exceeds the 10,000 contact limit. Please split it into smaller files.");
+                            }
                             break; // We found the phone number for this row, stop scanning other columns!
                         }
                     }

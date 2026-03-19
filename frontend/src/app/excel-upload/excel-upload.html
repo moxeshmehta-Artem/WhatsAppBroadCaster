@@ -2,7 +2,7 @@
   <div class="upload-card">
     
     <div class="card-header">
-      <h2>🚀 Start a New Campaign</h2>
+      <h2>Start a New Campaign</h2>
       <p>Configure your broadcast and upload your targets.</p>
     </div>
 
@@ -11,16 +11,17 @@
       <div class="form-group">
         <label>Select Provider</label>
         <select [(ngModel)]="selectedProvider">
-          <option value="infobip">Infobip</option>
-          <option value="360dialog">360Dialog</option>
+          @for (provider of activeProviders(); track provider.providerID) {
+            <option [value]="provider.providerName.toLowerCase()">{{ provider.providerName }}</option>
+          }
         </select>
       </div>
 
       <div class="form-group">
         <label>Select Template</label>
         <select [(ngModel)]="selectedTemplate">
-          <option [value]="1">Medical Camp (ID 1)</option>
-          <option [value]="2">Blood Camp (ID 2)</option>
+          <option [value]="1">Medical Camp </option>
+          <option [value]="2">Blood Camp</option>
         </select>
       </div>
 
@@ -40,7 +41,7 @@
     <div class="file-dropzone">
       <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".xlsx, .csv" hidden>
       <label for="fileInput" class="upload-label">
-        <span class="icon">📁</span>
+        <span class="fa-solid fa-file-excel" style="color: green;"></span>
         <span class="instruction"><strong>Click here</strong> to select an Excel file</span>
         
         @if (selectedFileName) {
@@ -54,13 +55,13 @@
       <button class="preview-btn" 
           [disabled]="!selectedFile" 
           (click)="onPreviewClick()">
-        Fetch Contacts 🔍
+        Fetch Contacts 
       </button>
 
       <button class="blast-btn" 
           [disabled]="!selectedFile || !variableDate || !variableAddress || previewContacts.length === 0" 
           (click)="onUploadClick()">
-        Launch WhatsApp Blast 🚀
+        Launch WhatsApp Blast 
       </button>
     </div>
 

@@ -17,8 +17,9 @@
       <div class="form-group">
         <label>Select Provider</label>
         <select [(ngModel)]="selectedProvider">
-          <option value="infobip">Infobip</option>
-          <option value="360dialog">360Dialog</option>
+          @for (provider of activeProviders(); track provider.providerID) {
+            <option [value]="provider.providerName.toLowerCase()">{{ provider.providerName }}</option>
+          }
         </select>
       </div>
 
@@ -45,7 +46,7 @@
     <button class="send-btn" 
         [disabled]="!phoneNumber || !variableDate || !variableAddress" 
         (click)="onSendClick()">
-      Send Now 🚀
+      Send Now
     </button>
 
   </div>

@@ -1,8 +1,7 @@
 package com.example.messagebroadcast.controller;
 
 import com.example.messagebroadcast.entity.WhatsAppProvider;
-import com.example.messagebroadcast.enums.ProviderStatus;
-import com.example.messagebroadcast.repository.WhatsAppProviderRepository;
+import com.example.messagebroadcast.service.ProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +15,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProviderController {
 
-    private final WhatsAppProviderRepository providerRepository;
+    private final ProviderService providerService;
 
     @GetMapping
     public ResponseEntity<List<WhatsAppProvider>> getAllProviders() {
-        return ResponseEntity.ok(providerRepository.findAll());
+        return ResponseEntity.ok(providerService.getAllProviders());
     }
 
     @PutMapping("/{id}/status")
@@ -28,17 +27,18 @@ public class ProviderController {
             @PathVariable Long id,
             @RequestBody Map<String, String> payload) {
         
-        WhatsAppProvider provider = providerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Provider not found"));
-                
         String newStatus = payload.get("status");
         if (newStatus == null || (!newStatus.equals("ACTIVE") && !newStatus.equals("INACTIVE"))) {
             return ResponseEntity.badRequest().body("Invalid Status");
         }
-        
-        provider.setStatus(ProviderStatus.valueOf(newStatus));
-        WhatsAppProvider updated = providerRepository.save(provider);
-        
-        return ResponseEntity.ok(updated);
+
+        try {
+            WhatsAppProvider updated = providerService.updateStatus(id, newStatus);
+            return ResponseEntity.ok(updated);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to update status: " + e.getMessage());
+        }
     }
 }

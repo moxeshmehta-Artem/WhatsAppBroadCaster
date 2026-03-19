@@ -34,6 +34,15 @@ export class ProviderManagement implements OnInit {
   }
 
   toggleStatus(provider: Provider) {
+    // SECURITY GUARD: Ensure atleast one provider stays active!
+    if (provider.status === 'ACTIVE') {
+      const activeCount = this.providers().filter(p => p.status === 'ACTIVE').length;
+      if (activeCount <= 1) {
+        alert("SYSTEM ERROR:\n\nYou cannot deactivate this provider. Atleast ONE provider must remain ACTIVE to ensure messages can be sent.");
+        return;
+      }
+    }
+
     const newStatus = provider.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
     
     this.http.put(`http://localhost:8080/api/providers/${provider.providerID}/status`, { status: newStatus }).subscribe({

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // 1. Added for two-way binding!
 import { HttpClient } from '@angular/common/http';
 
@@ -8,8 +8,31 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './excel-upload.html',
   styleUrl: './excel-upload.scss'
 })
-export class ExcelUpload {
+export class ExcelUpload implements OnInit {
   http = inject(HttpClient);
+
+  // Dynamic Provider List!
+  activeProviders = signal<any[]>([]);
+
+  ngOnInit() {
+    this.fetchActiveProviders();
+  }
+
+  fetchActiveProviders() {
+    this.http.get<any[]>('http://localhost:8080/api/providers').subscribe({
+      next: (data) => {
+        // Screen ONLY the active ones for our Campaign Tool
+        const active = data.filter(p => p.status === 'ACTIVE');
+        this.activeProviders.set(active);
+
+        // Auto-select the first active provider if possible
+        if (active.length > 0) {
+          this.selectedProvider = active[0].providerName.toLowerCase();
+        }
+      },
+      error: (err) => console.error("Could not fetch active providers", err)
+    });
+  }
 
   selectedFile: File | null = null;
   selectedFileName: string = '';
