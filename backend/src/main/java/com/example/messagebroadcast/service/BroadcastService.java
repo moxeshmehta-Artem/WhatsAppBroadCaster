@@ -11,6 +11,7 @@ import com.example.messagebroadcast.repository.WhatsAppLogRepository;
 import com.example.messagebroadcast.repository.WhatsAppTemplateRepository;
 import com.example.messagebroadcast.repository.WhatsAppProviderRepository;
 import com.example.messagebroadcast.repository.WhatsAppLogDetailRepository;
+import com.example.messagebroadcast.enums.MessageStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -143,7 +144,7 @@ public class BroadcastService {
                 logBatch.add(messageLog);
 
                 // Track success/failure for the response
-                if (response.getStatus() != null && (response.getStatus().contains("FAILED") || response.getStatus().contains("ERROR"))) {
+                if (response.getStatus() == MessageStatus.FAILED || response.getStatus() == MessageStatus.ERROR) {
                     failedCount++;
                 } else {
                     successCount++;
@@ -157,7 +158,7 @@ public class BroadcastService {
                         .mobileNo(number)
                         .template(template)
                         .provider(dbProvider)
-                        .status("FAILED")
+                        .status(MessageStatus.FAILED)
                         .build();
                 logBatch.add(failedLog);
             }
@@ -172,7 +173,7 @@ public class BroadcastService {
                     WhatsAppLogDetail detail = WhatsAppLogDetail.builder()
                             .whatsAppLog(savedLog)
                             .status(savedLog.getStatus())
-                            .errorMessage("FAILED".equals(savedLog.getStatus()) ? "Provider rejected or system error" : "Success")
+                            .errorMessage(savedLog.getStatus() == MessageStatus.FAILED ? "Provider rejected or system error" : "Success")
                             .build();
                     detailBatch.add(detail);
                 }

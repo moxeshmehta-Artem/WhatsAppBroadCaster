@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Required for @for loops!
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-template-approvals',
@@ -7,18 +8,31 @@ import { CommonModule } from '@angular/common'; // Required for @for loops!
   templateUrl: './template-approvals.html',
   styleUrl: './template-approvals.scss'
 })
-export class TemplateApprovals {
-  // We will replace this with a real HTTP GET call to Spring Boot later!
-  templates = [
-    { id: 1, name: 'Holiday Sale', status: 'APPROVED', content: 'Hi {{name}}, get 20% off today!' },
-    { id: 2, name: 'Password Reset', status: 'APPROVED', content: 'Your code is {{code}}.' },
-    { id: 3, name: 'Spammy Blast', status: 'REJECTED', content: 'BUY CRYPTO NOW!!' },
-    { id: 4, name: 'Medical Camp', status: 'PENDING', content: 'Dr. Vora camp is at {{address}}.' }
-  ];
+export class TemplateApprovals implements OnInit {
+  http = inject(HttpClient);
+  
+  // Real dynamic list from Java Backend
+  templates = signal<any[]>([]);
 
-  getStatusClass(status: string) {
-    if (status === 'APPROVED') return 'badge-success';
-    if (status === 'REJECTED') return 'badge-danger';
-    return 'badge-warning';
+  ngOnInit() {
+    this.fetchTemplates();
+  }
+
+  fetchTemplates() {
+    this.http.get<any[]>('http://localhost:8080/api/templates').subscribe({
+      next: (data) => {
+        this.templates.set(data);
+      },
+      error: (err) => console.error("Could not fetch real templates from DB", err)
+    });
+  }
+
+  //i want to print status in written form not in code form
+
+
+  getStatusText(status: string) {
+    if (status === 'APPROVED') return 'Approved';
+    if (status === 'REJECTED') return 'Rejected';
+    return 'Pending';
   }
 }

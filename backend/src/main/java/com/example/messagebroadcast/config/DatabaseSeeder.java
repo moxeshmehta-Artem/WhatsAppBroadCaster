@@ -36,6 +36,7 @@ public class DatabaseSeeder {
                 WhatsAppTemp template = WhatsAppTemp.builder()
                         .name("MedicalCamp")
                         .content(templateContent)
+                        .status("APPROVED")
                         .build();
                 
                 templateRepo.save(template);

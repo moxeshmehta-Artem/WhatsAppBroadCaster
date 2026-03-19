@@ -48,23 +48,23 @@ public class BroadcastController {
         }
     }
 
-    // ENDPOINT for EXCEL Blasts (BATCH PROCESSED!)
+    // ENDPOINT for EXCEL Blasts (FULLY DYNAMIC!)
     @PostMapping("/bulk")
     public ResponseEntity<?> bulkBroadcast(
             @RequestParam("file") org.springframework.web.multipart.MultipartFile file,
             @RequestParam("provider") String provider,
             @RequestParam("templateId") Long templateId,
-            @RequestParam("varDate") String varDate,
-            @RequestParam("varAddress") String varAddress) {
+            @RequestParam java.util.Map<String, String> allRequestParams) {
 
         try {
             // 1. Extract all numbers from the Excel Sheet
             List<String> phoneNumbers = excelParserService.extractAllPhoneNumbers(file);
 
-            // 2. Form the template variables map
-            java.util.Map<String, String> variables = new java.util.HashMap<>();
-            variables.put("Date", varDate);
-            variables.put("address", varAddress);
+            // 2. Identify variables dynamically (any param that isn't provider or templateId)
+            java.util.Map<String, String> variables = new java.util.HashMap<>(allRequestParams);
+            variables.remove("provider");
+            variables.remove("templateId");
+            // Note: 'file' is handled by MultipartFile, so it's not in the map anyway.
 
             // 3. Delegate to Service Layer for BATCH PROCESSING!
             com.example.messagebroadcast.dto.BulkBroadcastResult result = 

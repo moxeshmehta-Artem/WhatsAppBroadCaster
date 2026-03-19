@@ -1,6 +1,7 @@
 package com.example.messagebroadcast.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.messagebroadcast.enums.MessageStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,8 +36,9 @@ public class WhatsAppLog {
     @JoinColumn(name = "provider_id")
     private WhatsAppProvider provider;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status; // e.g., "SENT", "FAILED"
+    private MessageStatus status; 
     
     @JsonProperty("externalMessageId")
     @Column(name = "external_message_id")

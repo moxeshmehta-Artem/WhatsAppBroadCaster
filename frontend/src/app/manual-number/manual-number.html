@@ -25,26 +25,25 @@
 
       <div class="form-group">
         <label>Select Template</label>
-        <select [(ngModel)]="selectedTemplate">
-          <option [value]="1">Medical Camp (ID 1)</option>
-          <option [value]="2">Blood Camp (ID 2)</option>
+        <select [(ngModel)]="selectedTemplateId" (change)="onTemplateChange()">
+          @for (temp of allTemplates(); track temp.id) {
+            <option [value]="temp.id">{{ temp.name }}</option>
+          }
         </select>
       </div>
 
-      <div class="form-group">
-        <label>Template Variable: {{ '{Date}' }}</label>
-        <input type="text" [(ngModel)]="variableDate" placeholder="e.g. 24th October">
-      </div>
-
-      <div class="form-group">
-        <label>Template Variable: {{ '{address}' }}</label>
-        <input type="text" [(ngModel)]="variableAddress" placeholder="e.g. City Hospital Center">
-      </div>
+      <!-- DYNAMIC VARIABLES SECTION -->
+      @for (variable of templateVariables; track $index) {
+        <div class="form-group">
+          <label>Template Variable: {{ '{{' + variable.key + '}}' }}</label>
+          <input type="text" [(ngModel)]="variable.value" [placeholder]="'Enter ' + variable.key">
+        </div>
+      }
     </div>
 
     <!-- Submit Button -->
     <button class="send-btn" 
-        [disabled]="!phoneNumber || !variableDate || !variableAddress" 
+        [disabled]="isFormInvalid()" 
         (click)="onSendClick()">
       Send Now
     </button>

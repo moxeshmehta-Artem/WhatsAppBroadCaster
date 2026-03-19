@@ -15,6 +15,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.messagebroadcast.enums.MessageStatus;
+
 @Service
 @Slf4j
 public class InfobipProviderPlugin implements BroadcastProviderPlugin {
@@ -81,13 +83,13 @@ public class InfobipProviderPlugin implements BroadcastProviderPlugin {
                 log.warn("Failed to parse Infobip messageId: {}", e.getMessage());
             }
 
-            return new SendMessageResponseDTO(true, "SENT_VIA_INFOBIP", messageId, "Response: " + response.getBody());
+            return new SendMessageResponseDTO(true, MessageStatus.SENT, messageId, "Response: " + response.getBody());
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("API Error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            return new SendMessageResponseDTO(false, "API_ERROR", null, e.getResponseBodyAsString());
+            return new SendMessageResponseDTO(false, MessageStatus.ERROR, null, e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send Infobip message: ", e);
-            return new SendMessageResponseDTO(false, "FAILED_INFOBIP", null, e.getMessage());
+            return new SendMessageResponseDTO(false, MessageStatus.FAILED, null, e.getMessage());
         }
     }
 

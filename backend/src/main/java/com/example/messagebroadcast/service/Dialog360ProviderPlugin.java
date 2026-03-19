@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.example.messagebroadcast.enums.MessageStatus;
 
 @Service
 @Slf4j
@@ -71,13 +72,13 @@ public class Dialog360ProviderPlugin implements BroadcastProviderPlugin {
                 log.warn("Failed to parse 360dialog messageId: {}", e.getMessage());
             }
 
-            return new SendMessageResponseDTO(true, "SENT_VIA_360DIALOG", messageId, "Response: " + response.getBody());
+            return new SendMessageResponseDTO(true, MessageStatus.SENT, messageId, "Response: " + response.getBody());
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("Failed to send 360dialog message. HTTP STATUS: " + e.getStatusCode() + " BODY: " + e.getResponseBodyAsString());
-            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", null, "HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+            return new SendMessageResponseDTO(false, MessageStatus.FAILED, null, "HTTP " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send 360dialog message: ", e);
-            return new SendMessageResponseDTO(false, "FAILED_360DIALOG", null, e.getMessage());
+            return new SendMessageResponseDTO(false, MessageStatus.FAILED, null, e.getMessage());
         }
     }
 

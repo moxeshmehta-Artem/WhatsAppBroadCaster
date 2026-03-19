@@ -24,4 +24,8 @@ public class WhatsAppTemp {
     @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Builder.Default
+    @Column(name = "status")
+    private String status = "PENDING"; // APPROVED, REJECTED, PENDING
+
 }

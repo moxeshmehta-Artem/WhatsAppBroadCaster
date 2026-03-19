@@ -11,21 +11,20 @@ import { HttpClient } from '@angular/common/http';
 export class ExcelUpload implements OnInit {
   http = inject(HttpClient);
 
-  // Dynamic Provider List!
+  // Dynamic Lists from DB!
   activeProviders = signal<any[]>([]);
+  allTemplates = signal<any[]>([]);
 
   ngOnInit() {
     this.fetchActiveProviders();
+    this.fetchTemplates();
   }
 
   fetchActiveProviders() {
     this.http.get<any[]>('http://localhost:8080/api/providers').subscribe({
       next: (data) => {
-        // Screen ONLY the active ones for our Campaign Tool
         const active = data.filter(p => p.status === 'ACTIVE');
         this.activeProviders.set(active);
-
-        // Auto-select the first active provider if possible
         if (active.length > 0) {
           this.selectedProvider = active[0].providerName.toLowerCase();
         }
@@ -34,14 +33,42 @@ export class ExcelUpload implements OnInit {
     });
   }
 
+  fetchTemplates() {
+    this.http.get<any[]>('http://localhost:8080/api/templates').subscribe({
+      next: (data) => {
+        this.allTemplates.set(data);
+        if (data.length > 0) {
+          this.selectedTemplateId = data[0].id;
+          this.onTemplateChange();
+        }
+      },
+      error: (err) => console.error("Could not load templates", err)
+    });
+  }
+
   selectedFile: File | null = null;
   selectedFileName: string = '';
 
-  // New Form Controls!
+  // Form Controls!
   selectedProvider: string = 'infobip';
-  selectedTemplate: number = 2; // Assuming Bloodcamp is ID 2
-  variableDate: string = '';
-  variableAddress: string = '';
+  selectedTemplateId: number = 0;
+  
+  // DYNAMIC VARIABLES SYSTEM
+  templateVariables: { key: string, value: string }[] = [];
+
+  onTemplateChange() {
+    const template = this.allTemplates().find(t => t.id == this.selectedTemplateId);
+    if (template) {
+      const regex = /\{\{(.*?)\}\}/g;
+      const matches = [...template.content.matchAll(regex)];
+      const varNames = [...new Set(matches.map(m => m[1]))];
+      this.templateVariables = varNames.map(name => ({ key: name, value: '' }));
+    }
+  }
+
+  isFormInvalid() {
+    return !this.selectedFile || this.templateVariables.some(v => !v.value.trim());
+  }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
@@ -58,12 +85,12 @@ export class ExcelUpload implements OnInit {
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     formData.append('provider', this.selectedProvider);
-    formData.append('templateId', this.selectedTemplate.toString());
-    formData.append('varDate', this.variableDate);
-    formData.append('varAddress', this.variableAddress);
-
-    // This alert proves all the data was captured perfectly!
-    alert(`Sending Campaign to Java!\nFile: ${this.selectedFileName}\nProvider: ${this.selectedProvider}\nTemplate: ${this.selectedTemplate}\nDate: ${this.variableDate}\nAddress: ${this.variableAddress}`);
+    formData.append('templateId', this.selectedTemplateId.toString());
+    
+    // Append all dynamic variables!
+    this.templateVariables.forEach(v => {
+      formData.append(v.key, v.value);
+    });
 
     this.http.post('http://localhost:8080/api/broadcast/bulk', formData).subscribe({
       next: (res: any) => {

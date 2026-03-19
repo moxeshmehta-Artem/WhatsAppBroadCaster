@@ -11,26 +11,38 @@ import { HttpClient } from '@angular/common/http';
 export class ManualNumber implements OnInit {
   http = inject(HttpClient);
 
-  // List of active providers from Database!
+  // List of active providers and templates from Database!
   activeProviders = signal<any[]>([]);
+  allTemplates = signal<any[]>([]);
 
   ngOnInit() {
     this.fetchActiveProviders();
+    this.fetchTemplates();
   }
 
   fetchActiveProviders() {
     this.http.get<any[]>('http://localhost:8080/api/providers').subscribe({
       next: (data) => {
-        // We ONLY want to show providers that are actually online/ACTIVE
         const onlyActive = data.filter(p => p.status === 'ACTIVE');
         this.activeProviders.set(onlyActive);
-        
-        // Auto-select the first active provider if possible
         if (onlyActive.length > 0) {
           this.selectedProvider = onlyActive[0].providerName.toLowerCase();
         }
       },
-      error: (err) => console.error("Could not load providers for dropdown", err)
+      error: (err) => console.error("Could not load providers", err)
+    });
+  }
+
+  fetchTemplates() {
+    this.http.get<any[]>('http://localhost:8080/api/templates').subscribe({
+      next: (data) => {
+        this.allTemplates.set(data);
+        if (data.length > 0) {
+          this.selectedTemplateId = data[0].id;
+          this.onTemplateChange();
+        }
+      },
+      error: (err) => console.error("Could not load templates", err)
     });
   }
 
@@ -39,20 +51,41 @@ export class ManualNumber implements OnInit {
 
   // Form Configuration Controls
   selectedProvider: string = 'infobip';
-  selectedTemplate: number = 2; // Default to Bloodcamp
-  variableDate: string = '';
-  variableAddress: string = '';
+  selectedTemplateId: number = 0;
+  
+  // DYNAMIC VARIABLES SYSTEM
+  templateVariables: { key: string, value: string }[] = [];
+
+  onTemplateChange() {
+    const template = this.allTemplates().find(t => t.id == this.selectedTemplateId);
+    if (template) {
+      // Logic to find all {{variableName}} patterns in the content
+      const regex = /\{\{(.*?)\}\}/g;
+      const matches = [...template.content.matchAll(regex)];
+      
+      // Extract unique variable names
+      const varNames = [...new Set(matches.map(m => m[1]))];
+      
+      // Update the dynamic input list
+      this.templateVariables = varNames.map(name => ({ key: name, value: '' }));
+    }
+  }
+
+  isFormInvalid() {
+    return !this.phoneNumber || this.templateVariables.some(v => !v.value.trim());
+  }
 
   onSendClick() {
-    // 1. Build the DTO using the dynamic user input!
+    // 1. Build variables map from the dynamic list
+    const varsMap: any = {};
+    this.templateVariables.forEach(v => varsMap[v.key] = v.value);
+
+    // 2. Build the DTO
     const requestPayload = {
       mobileNumber: this.phoneNumber,
-      templateId: this.selectedTemplate,
+      templateId: this.selectedTemplateId,
       provider: this.selectedProvider,
-      variables: {
-        "Date": this.variableDate,
-        "address": this.variableAddress
-      }
+      variables: varsMap
     };
 
     // 2. Fire the Request!
@@ -67,9 +100,9 @@ export class ManualNumber implements OnInit {
         
         // Explicitly check if Java threw the INACTIVE provider exception safely
         if (backendError.toUpperCase().includes('INACTIVE')) {
-            alert(`⛔ PROVIDER OFFLINE:\n\nThe provider '${this.selectedProvider}' is flagged as INACTIVE! Please go to the Provider Management menu to turn it back on.`);
+            alert(` PROVIDER OFFLINE:\n\nThe provider '${this.selectedProvider}' is flagged as INACTIVE! Please go to the Provider Management menu to turn it back on.`);
         } else {
-            alert(`❌ FAILED:\n\n${backendError}`);
+            alert(` FAILED:\n\n${backendError}`);
         }
         
         console.error("Java API trace:", error);
