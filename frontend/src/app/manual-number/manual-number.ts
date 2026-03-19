@@ -39,8 +39,17 @@ export class ManualNumber {
         console.log(response);
       },
       error: (error) => {
-        alert("❌ Failed to send! Check your Java Console.");
-        console.error(error);
+        // Extract the physical error response string injected by our Java Backend
+        const backendError = typeof error.error === 'string' ? error.error : 'Unknown Server Error';
+        
+        // Explicitly check if Java threw the INACTIVE provider exception safely
+        if (backendError.toUpperCase().includes('INACTIVE')) {
+            alert(`⛔ PROVIDER OFFLINE:\n\nThe provider '${this.selectedProvider}' is flagged as INACTIVE! Please go to the Provider Management menu to turn it back on.`);
+        } else {
+            alert(`❌ FAILED:\n\n${backendError}`);
+        }
+        
+        console.error("Java API trace:", error);
       }
     });
   }
