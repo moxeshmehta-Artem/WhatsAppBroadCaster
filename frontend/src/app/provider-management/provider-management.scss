@@ -1,0 +1,77 @@
+.provider-container {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.provider-card {
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+  padding: 3rem;
+}
+
+.card-header h2 { margin-top: 0; color: #0f172a; font-size: 2rem; }
+.card-header p { color: #64748b; font-size: 1.1rem; margin-bottom: 2.5rem; }
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+  text-align: left;
+  background-color: white;
+  
+  thead tr {
+    background-color: #f8fafc;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    
+    th { padding: 1rem 1.5rem; font-weight: 700; }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.2s;
+    
+    &:hover { background-color: #f8fafc; }
+    
+    td { padding: 1rem 1.5rem; color: #334155; }
+  }
+}
+
+.name-col { color: #0284c7 !important; }
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-success { background-color: #dcfce7; color: #16a34a; }
+.badge-danger { background-color: #fee2e2; color: #dc2626; }
+
+.action-btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-red {
+  background-color: #ef4444;
+  &:hover { background-color: #dc2626; transform: scale(1.05); }
+}
+
+.btn-green {
+  background-color: #22c55e;
+  &:hover { background-color: #16a34a; transform: scale(1.05); }
+}

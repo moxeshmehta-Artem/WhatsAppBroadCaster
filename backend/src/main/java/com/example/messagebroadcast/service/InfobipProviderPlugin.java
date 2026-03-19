@@ -67,8 +67,15 @@ public class InfobipProviderPlugin implements BroadcastProviderPlugin {
             String messageId = null;
             try {
                 JsonNode root = objectMapper.readTree(response.getBody());
-                if (root.has("messages") && root.get("messages").isArray() && root.get("messages").size() > 0) {
+                log.info("Raw Infobip API Response: {}", response.getBody());
+                
+                if (root.has("messages") && root.get("messages").isArray() && !root.get("messages").isEmpty()) {
                     messageId = root.get("messages").get(0).get("messageId").asText();
+                } else if (root.has("messageId")) {
+                    // Fallback for when Infobip returns the messageId directly on the root object
+                    messageId = root.get("messageId").asText();
+                } else {
+                    log.warn("messageId completely missing from Infobip response body!");
                 }
             } catch (Exception e) {
                 log.warn("Failed to parse Infobip messageId: {}", e.getMessage());

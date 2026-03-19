@@ -1,0 +1,40 @@
+<div class="provider-container">
+  <div class="provider-card">
+
+    <div class="card-header">
+      <h2>🔌 Provider's List</h2>
+      <p>Manage which APIs are legally allowed to broadcast messages.</p>
+    </div>
+
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Provider Management</th>
+          <th>Current Status</th>
+          <th>Toggle Access</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (provider of providers(); track provider.providerID) {
+        <tr>
+          <td><strong>#{{ provider.providerID }}</strong></td>
+          <td class="name-col"><strong>{{ provider.providerName }}</strong></td>
+          <td>
+            <span class="badge" [ngClass]="provider.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'">
+              {{ provider.status }}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn" [ngClass]="provider.status === 'ACTIVE' ? 'btn-red' : 'btn-green'"
+              (click)="toggleStatus(provider)">
+              {{ provider.status === 'ACTIVE' ? 'Deactivate' : 'Activate' }}
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+  </div>
+</div>

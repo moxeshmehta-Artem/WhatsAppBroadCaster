@@ -6,6 +6,7 @@ com/example/messagebroadcast/repository/WhatsAppTemplateRepository.class
 com/example/messagebroadcast/entity/WhatsAppLogDetail.class
 com/example/messagebroadcast/entity/WhatsAppTemp$WhatsAppTempBuilder.class
 com/example/messagebroadcast/entity/WhatsAppProvider.class
+com/example/messagebroadcast/controller/ProviderController.class
 com/example/messagebroadcast/repository/WhatsAppLogDetailRepository.class
 com/example/messagebroadcast/entity/WhatsAppTemp.class
 com/example/messagebroadcast/dto/BroadcastRequestDTO.class

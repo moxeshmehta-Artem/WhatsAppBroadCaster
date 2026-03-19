@@ -6,19 +6,45 @@
       <p>Instantly ping a single user via WhatsApp.</p>
     </div>
 
-    <!-- The Form -->
-    <div class="form-group">
+    <!-- The Phone Number Input -->
+    <div class="form-group phone-group">
       <label>Recipient Phone Number</label>
       <input type="text" [(ngModel)]="phoneNumber" placeholder="e.g. 919876543210">
     </div>
 
-    <div class="form-group">
-      <label>Custom Message</label>
-      <textarea [(ngModel)]="messageBody" rows="4" placeholder="Type your message here..."></textarea>
+    <!-- The Configuration Grid -->
+    <div class="controls-grid">
+      <div class="form-group">
+        <label>Select Provider</label>
+        <select [(ngModel)]="selectedProvider">
+          <option value="infobip">Infobip</option>
+          <option value="360dialog">360Dialog</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Select Template</label>
+        <select [(ngModel)]="selectedTemplate">
+          <option [value]="1">Medical Camp (ID 1)</option>
+          <option [value]="2">Blood Camp (ID 2)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Template Variable: {{ '{Date}' }}</label>
+        <input type="text" [(ngModel)]="variableDate" placeholder="e.g. 24th October">
+      </div>
+
+      <div class="form-group">
+        <label>Template Variable: {{ '{address}' }}</label>
+        <input type="text" [(ngModel)]="variableAddress" placeholder="e.g. City Hospital Center">
+      </div>
     </div>
 
     <!-- Submit Button -->
-    <button class="send-btn" [disabled]="!phoneNumber || !messageBody" (click)="onSendClick()">
+    <button class="send-btn" 
+        [disabled]="!phoneNumber || !variableDate || !variableAddress" 
+        (click)="onSendClick()">
       Send Now 🚀
     </button>
 

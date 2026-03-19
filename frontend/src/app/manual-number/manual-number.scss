@@ -9,45 +9,18 @@
 .manual-card {
   background: white;
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   border: 1px solid #e2e8f0;
   padding: 3rem;
+  text-align: center;
 }
 
 .card-header h2 { margin-top: 0; color: #0f172a; }
 .card-header p { color: #64748b; margin-bottom: 2rem; }
 
-/* Form inputs styling */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1.5rem;
-  text-align: left;
-
-  label {
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 0.5rem;
-  }
-
-  input, textarea {
-    padding: 0.8rem;
-    border: 2px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-family: inherit;
-    transition: border-color 0.3s;
-
-    &:focus {
-      outline: none;
-      border-color: #38bdf8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-    }
-  }
-}
-
+/* The Send Button */
 .send-btn {
   width: 100%;
   padding: 1rem;
@@ -68,5 +41,73 @@
   &:disabled {
     background-color: #cbd5e1;
     cursor: not-allowed;
+  }
+}
+
+/* Phone input specifically */
+.phone-group {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+
+  label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    font-size: 1.2rem;
+    padding: 1rem;
+    font-weight: 600;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+  }
+}
+
+/* 2x2 Grid Layout */
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  text-align: left;
+  margin-bottom: 2.5rem;
+  background-color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+
+    label {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    input, select {
+      padding: 0.7rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.95rem;
+
+      &:focus {
+        outline: none;
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+      }
+    }
   }
 }

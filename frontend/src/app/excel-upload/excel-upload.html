@@ -3,8 +3,38 @@
     
     <div class="card-header">
       <h2>🚀 Start a New Campaign</h2>
-      <p>Upload an Excel file (.xlsx or .csv) containing your phone numbers to blast.</p>
+      <p>Configure your broadcast and upload your targets.</p>
     </div>
+
+    <!-- NEW CONTROLS SECTION -->
+    <div class="controls-grid">
+      <div class="form-group">
+        <label>Select Provider</label>
+        <select [(ngModel)]="selectedProvider">
+          <option value="infobip">Infobip</option>
+          <option value="360dialog">360Dialog</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Select Template</label>
+        <select [(ngModel)]="selectedTemplate">
+          <option [value]="1">Medical Camp (ID 1)</option>
+          <option [value]="2">Blood Camp (ID 2)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Template Variable: {{ '{Date}' }}</label>
+        <input type="text" [(ngModel)]="variableDate" placeholder="e.g. 24th October">
+      </div>
+
+      <div class="form-group">
+        <label>Template Variable: {{ '{address}' }}</label>
+        <input type="text" [(ngModel)]="variableAddress" placeholder="e.g. City Hospital Center">
+      </div>
+    </div>
+    <!-- END CONTROLS SECTION -->
 
     <!-- The physical upload box -->
     <div class="file-dropzone">
@@ -13,17 +43,38 @@
         <span class="icon">📁</span>
         <span class="instruction"><strong>Click here</strong> to select an Excel file</span>
         
-        <!-- This will magically show the filename if the user selects one! -->
         @if (selectedFileName) {
           <span class="file-name">Selected: {{ selectedFileName }}</span>
         }
       </label>
     </div>
 
-    <!-- The Action Button. We disable it until they definitely select a file -->
-    <button class="blast-btn" [disabled]="!selectedFile" (click)="onUploadClick()">
-      Launch WhatsApp Blast
-    </button>
+    <!-- The Action Buttons -->
+    <div class="action-buttons">
+      <button class="preview-btn" 
+          [disabled]="!selectedFile" 
+          (click)="onPreviewClick()">
+        Fetch Contacts 🔍
+      </button>
+
+      <button class="blast-btn" 
+          [disabled]="!selectedFile || !variableDate || !variableAddress || previewContacts.length === 0" 
+          (click)="onUploadClick()">
+        Launch WhatsApp Blast 🚀
+      </button>
+    </div>
+
+    <!-- The Contacts Preview display -->
+    @if (previewContacts.length > 0) {
+      <div class="contacts-preview">
+        <h3>Found {{ previewContacts.length }} Targets:</h3>
+        <div class="tags-container">
+          @for (contact of previewContacts; track $index) {
+            <span class="contact-tag">{{ contact }}</span>
+          }
+        </div>
+      </div>
+    }
 
   </div>
 </div>
