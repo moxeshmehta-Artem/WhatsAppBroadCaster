@@ -32,6 +32,7 @@ public class BroadcastService {
     private final List<BroadcastProviderPlugin> providers;
     private final WhatsAppProviderRepository providerRepository;
     private final WhatsAppLogDetailRepository logDetailRepository;
+    private final DynamicSender dynamicSender;
 
     public WhatsAppLog processAndBroadcast(BroadcastRequestDTO requestDTO) {
         log.info("Processing broadcast request for mobile {}, using provider {}", requestDTO.getMobileNumber(), requestDTO.getProvider());
@@ -44,19 +45,25 @@ public class BroadcastService {
         String finalMessageContent = buildMessageFromTemplate(template.getContent(), requestDTO.getVariables());
 
         // 3. Select Provider
+        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCaseAndStatus(requestDTO.getProvider(), ProviderStatus.ACTIVE)
+                .orElseThrow(() -> new IllegalArgumentException("Provider not found or is INACTIVE: " + requestDTO.getProvider()));
 
-        //Keep it in a factory resolver following SRP
-        BroadcastProviderPlugin selectedProvider = providers.stream()
+        // 4. Resolve Plugin OR Dynamic Sender
+        SendMessageResponseDTO response;
+        BroadcastProviderPlugin plugin = providers.stream()
                 .filter(p -> p.getProviderName().equalsIgnoreCase(requestDTO.getProvider()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported provider: " + requestDTO.getProvider()));
+                .orElse(null); // No hardcoded plugin found
 
-        // 3.1 Fetch Provider Entity and check if it is active
-        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCaseAndStatus(selectedProvider.getProviderName(), ProviderStatus.ACTIVE)
-                .orElseThrow(() -> new IllegalArgumentException("Provider not found or is INACTIVE: " + selectedProvider.getProviderName()));
-
-        // 4. Send Message via Provider API
-        SendMessageResponseDTO response = selectedProvider.sendMessage(requestDTO.getMobileNumber(), finalMessageContent);
+        if (plugin != null) {
+            // Use hardcoded logic (Infobip, etc)
+            response = plugin.sendMessage(requestDTO.getMobileNumber(), finalMessageContent);
+        } else if (dbProvider.getApiUrl() != null && dbProvider.getPayloadTemplate() != null) {
+            // Handle as DYNAMIC provider from DB
+            response = dynamicSender.sendDynamicMessage(dbProvider, requestDTO.getMobileNumber(), finalMessageContent);
+        } else {
+            throw new IllegalArgumentException("No specialized plugin OR dynamic configuration found for " + requestDTO.getProvider());
+        }
 
         // 5. Save details   in DB Log
         WhatsAppLog messageLog = WhatsAppLog.builder()
@@ -100,17 +107,17 @@ public class BroadcastService {
         WhatsAppTemp template = templateRepository.findById(templateId)
                 .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + templateId));
 
-        // 2. Resolve Provider Plugin ONCE
+        // 2. Resolve Provider (DB Entity)
+        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCaseAndStatus(providerName, ProviderStatus.ACTIVE)
+                .orElseThrow(() -> new IllegalArgumentException("Provider not found or is INACTIVE: " + providerName));
+
+        // 3. Resolve Plugin (If exists)
         BroadcastProviderPlugin providerPlugin = providers.stream()
                 .filter(p -> p.getProviderName().equalsIgnoreCase(providerName))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unsupported provider: " + providerName));
+                .orElse(null);
 
-        // 3. Validate Provider is ACTIVE in DB ONCE
-        WhatsAppProvider dbProvider = providerRepository.findByProviderNameIgnoreCaseAndStatus(providerPlugin.getProviderName(), ProviderStatus.ACTIVE)
-                .orElseThrow(() -> new IllegalArgumentException("Provider not found or is INACTIVE: " + providerPlugin.getProviderName()));
-
-        // 4. Build the final message content ONCE (since all contacts get the same template)
+        // 4. Build the final message content ONCE
         String finalMessageContent = buildMessageFromTemplate(template.getContent(), variables);
 
         log.info("Bulk Broadcast started: {} contacts, provider={}, template={}", phoneNumbers.size(), providerName, templateId);
@@ -129,8 +136,15 @@ public class BroadcastService {
             if (number == null || number.trim().isEmpty()) continue;
 
             try {
-                // Send message via provider API
-                SendMessageResponseDTO response = providerPlugin.sendMessage(number, finalMessageContent);
+                // Send message via provider (Plugin OR Dynamic)
+                SendMessageResponseDTO response;
+                if (providerPlugin != null) {
+                    response = providerPlugin.sendMessage(number, finalMessageContent);
+                } else if (dbProvider.getApiUrl() != null && dbProvider.getPayloadTemplate() != null) {
+                    response = dynamicSender.sendDynamicMessage(dbProvider, number, finalMessageContent);
+                } else {
+                    throw new IllegalArgumentException("No specialized plugin OR dynamic configuration found for " + providerName);
+                }
 
                 // Build log entity (NOT saving yet!)
                 WhatsAppLog messageLog = WhatsAppLog.builder()

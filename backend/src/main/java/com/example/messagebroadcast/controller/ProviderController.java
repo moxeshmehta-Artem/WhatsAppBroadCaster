@@ -41,4 +41,16 @@ public class ProviderController {
             return ResponseEntity.internalServerError().body("Failed to update status: " + e.getMessage());
         }
     }
+
+    @PostMapping
+    public ResponseEntity<?> createProvider(@RequestBody WhatsAppProvider provider) {
+        try {
+            WhatsAppProvider created = providerService.createProvider(provider);
+            return ResponseEntity.ok(created);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 }

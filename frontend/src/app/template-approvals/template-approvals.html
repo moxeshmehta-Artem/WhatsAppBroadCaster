@@ -1,10 +1,38 @@
 <div class="template-container">
   <div class="template-card">
-    
+
     <div class="card-header">
       <h2>📋 WhatsApp Templates</h2>
-      <button class="new-btn">+ New Template</button>
+      <button class="new-btn" (click)="openDialog()">+ New Template</button>
     </div>
+    <!--Popup-->
+    @if(isPopupOpen){
+      <div class="popup" (click)="closeDialog()">
+        <div class="popup-content" (click)="$event.stopPropagation()">
+          <h2>Create New Template</h2>
+          <form (submit)="saveNewTemplate(); $event.preventDefault()">
+            <label>Template Name</label>
+            <input type="text" name="name" [(ngModel)]="newTemplate.name" placeholder="Enter template name" required>
+            
+            <label>Template Content</label>
+            <div class="placeholder-toolbar">
+              <span class="toolbar-label">Add Placeholder:</span>
+              <button type="button" (click)="insertPlaceholder('Name')">{{ '{{Name}}' }}</button>
+              <button type="button" (click)="insertPlaceholder('Date')">{{ '{{Date}}' }}</button>
+              <button type="button" (click)="insertPlaceholder('Address')">{{ '{{Address}}' }}</button>
+            </div>
+            
+            <textarea name="content" [(ngModel)]="newTemplate.content" placeholder="Enter template content" required></textarea>
+            
+            <div class="popup-buttons">
+              <button type="button" (click)="closeDialog()">Cancel</button>
+              <button type="submit">Create Template</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+    
 
     <table class="styled-table">
       <thead>
@@ -18,18 +46,18 @@
       <tbody>
         <!-- Loop over our data dynamically! -->
         @for (template of templates(); track template.id) {
-          <tr>
-            <td><strong>{{ template.name }}</strong></td>
-            <td class="content-col">{{ template.content }}</td>
-            <td>
-              <span class="badge" [ngClass]="getStatusText(template.status)">
-                {{ getStatusText(template.status) }}
-              </span>
-            </td>
-            <td>
-              <button class="action-btn">Edit</button>
-            </td>
-          </tr>
+        <tr>
+          <td><strong>{{ template.name }}</strong></td>
+          <td class="content-col">{{ template.content }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusText(template.status)">
+              {{ getStatusText(template.status) }}
+            </span>
+          </td>
+          <td>
+            <button class="delete-btn" (click)="deleteTemplate(template.id)">Delete</button>
+          </td>F+
+        </tr>
         }
       </tbody>
     </table>

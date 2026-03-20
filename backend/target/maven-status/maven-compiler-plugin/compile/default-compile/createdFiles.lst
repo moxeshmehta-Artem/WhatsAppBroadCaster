@@ -1,5 +1,6 @@
 com/example/messagebroadcast/config/DatabaseSeeder.class
 com/example/messagebroadcast/entity/WhatsAppLog.class
+com/example/messagebroadcast/service/DynamicSender.class
 com/example/messagebroadcast/service/BroadcastService.class
 com/example/messagebroadcast/MessageBroadcastApplication.class
 com/example/messagebroadcast/repository/WhatsAppTemplateRepository.class
@@ -19,4 +20,5 @@ com/example/messagebroadcast/dto/SendMessageResponseDTO.class
 com/example/messagebroadcast/service/Dialog360ProviderPlugin.class
 com/example/messagebroadcast/service/BroadcastProviderPlugin.class
 com/example/messagebroadcast/entity/WhatsAppProvider$WhatsAppProviderBuilder.class
+com/example/messagebroadcast/dto/SendMessageResponseDTO$SendMessageResponseDTOBuilder.class
 com/example/messagebroadcast/entity/WhatsAppLog$WhatsAppLogBuilder.class

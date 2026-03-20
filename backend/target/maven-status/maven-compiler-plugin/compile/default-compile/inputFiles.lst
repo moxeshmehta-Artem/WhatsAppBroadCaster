@@ -27,3 +27,4 @@
 /home/artem/Desktop/Backend/Message_Broadcast/backend/src/main/java/com/example/messagebroadcast/entity/WhatsAppLog.java
 /home/artem/Desktop/Backend/Message_Broadcast/backend/src/main/java/com/example/messagebroadcast/controller/WebhookController.java
 /home/artem/Desktop/Backend/Message_Broadcast/backend/src/main/java/com/example/messagebroadcast/service/BroadcastService.java
+/home/artem/Desktop/Backend/Message_Broadcast/backend/src/main/java/com/example/messagebroadcast/service/DynamicSender.java

@@ -23,8 +23,17 @@ public class WhatsAppProvider {
     @Column(name = "providerName", nullable = false, unique = true)
     private String providerName; // e.g. "INFOBIP" or "360DIALOG"
 
+    @Column(name = "apiUrl")
+    private String apiUrl;
+
+    @Column(name = "apiKey")
+    private String apiKey;
+
+    @Column(name = "payloadTemplate", columnDefinition = "TEXT")
+    private String payloadTemplate; // e.g. {"to":"{{phone}}", "text":"{{msg}}"}
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, columnDefinition = "varchar(255) default 'ACTIVE'")
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(20) default 'ACTIVE'")
     @Builder.Default
     private ProviderStatus status = ProviderStatus.ACTIVE;
 }

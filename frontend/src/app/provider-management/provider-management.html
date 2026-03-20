@@ -1,10 +1,53 @@
 <div class="provider-container">
   <div class="provider-card">
 
+   
     <div class="card-header">
-      <h2>🔌 Provider's List</h2>
-      <p>Manage which APIs are legally allowed to broadcast messages.</p>
+      <h2>📋 WhatsApp Providers</h2>
+      <button class="new-btn" (click)="openDialog()">+ New Provider</button>
     </div>
+
+    <!-- Popup Modal -->
+    @if(isPopupOpen) {
+      <div class="popup" (click)="closeDialog()">
+        <div class="popup-content" (click)="$event.stopPropagation()">
+          <h3>Register New Provider</h3>
+          <p class="popup-subtitle">Add a new messaging gateway to the system.</p>
+          
+          <form (submit)="saveNewProvider(); $event.preventDefault()">
+            <div class="form-group">
+              <label>Provider Name (e.g. TWILIO)</label>
+              <input type="text" name="name" [(ngModel)]="newProvider.providerName" 
+                     placeholder="Identifier name" required>
+            </div>
+
+            <div class="form-group">
+              <label>API Endpoint URL</label>
+              <input type="text" name="apiUrl" [(ngModel)]="newProvider.apiUrl" 
+                     placeholder="https://api.provider.com/v1/send" required>
+            </div>
+
+            <div class="form-group">
+              <label>Auth Header / API Key</label>
+              <input type="password" name="apiKey" [(ngModel)]="newProvider.apiKey" 
+                     placeholder="Bearer token or API key">
+            </div>
+
+            <div class="form-group">
+              <label>JSON Payload Template</label>
+              <textarea name="payload" [(ngModel)]="newProvider.payloadTemplate" 
+                        placeholder='{"to":"{phone}", "text":"{message}"}' required></textarea>
+              <small>Use variables "phone" and "message" inside double-braces.</small>
+            </div>
+            
+            <div class="popup-buttons">
+              <button type="button" class="cancel-btn" (click)="closeDialog()">Cancel</button>
+              <button type="submit" class="save-btn">Save Provider</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
 
     <table class="styled-table">
       <thead>
