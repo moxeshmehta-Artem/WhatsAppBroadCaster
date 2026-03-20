@@ -37,7 +37,7 @@ public class WhatsAppLog {
     private WhatsAppProvider provider;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "VARCHAR(20)")
     private MessageStatus status; 
     
     @JsonProperty("externalMessageId")

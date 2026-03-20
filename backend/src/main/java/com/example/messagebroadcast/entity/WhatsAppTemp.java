@@ -25,7 +25,7 @@ public class WhatsAppTemp {
     private String content;
 
     @Builder.Default
-    @Column(name = "status")
-    private String status = "PENDING"; // APPROVED, REJECTED, PENDING
+    @Column(name = "status", columnDefinition = "VARCHAR(20)")
+    private String status = "PENDING";
 
 }

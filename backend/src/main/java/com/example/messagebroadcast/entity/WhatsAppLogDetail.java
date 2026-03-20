@@ -28,7 +28,7 @@ public class WhatsAppLogDetail {
     private WhatsAppLog whatsAppLog;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", columnDefinition = "VARCHAR(20)")
     private MessageStatus status; 
 
     @Column(name = "errorMessage", columnDefinition = "TEXT")

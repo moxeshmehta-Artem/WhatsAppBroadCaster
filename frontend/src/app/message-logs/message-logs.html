@@ -1,0 +1,58 @@
+<div class="logs-container">
+  
+  <!-- Toggle Switch -->
+  <div class="toggle-wrapper">
+    <div class="toggle-buttons">
+      <button [class.active]="isWhatsApp()" (click)="toggleView('whatsapp')">
+        <span class="fa-brands fa-whatsapp"></span> WhatsApp Logs
+      </button>
+      <button [class.active]="!isWhatsApp()" (click)="toggleView('sms')">
+        <span class="fa-solid fa-comment-sms"></span> SMS Logs
+      </button>
+    </div>
+    <button class="refresh-btn" (click)="refreshLogs()">
+        <span class="fa-solid fa-rotate"></span> Refresh
+    </button>
+  </div>
+
+  @if (isWhatsApp()) {
+    <div class="logs-card">
+      <h2>📟 WhatsApp Broadcast History</h2>
+      <table class="logs-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Recipient</th>
+            <th>Template</th>
+            <th>Provider</th>
+            <th>Status</th>
+            <th>Details/Error</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of whatsappLogs(); track log.id) {
+            <tr>
+              <td>{{ log.timestamp | date:'short' }}</td>
+              <td><strong>{{ log.mobileNo }}</strong></td>
+              <td>{{ log.template }}</td>
+              <td>{{ log.provider }}</td>
+              <td>
+                <span class="badge" [ngClass]="getStatusClass(log.status)">
+                  {{ log.status }}
+                </span>
+              </td>
+              <td class="error-msg">{{ log.errorMessage }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <div class="logs-card placeholder-card">
+      <span class="fa-solid fa-clock-rotate-left"></span>
+      <h3>SMS Logs Coming Soon</h3>
+      <p>This feature is currently under development to support GSM Gateways.</p>
+    </div>
+  }
+
+</div>
