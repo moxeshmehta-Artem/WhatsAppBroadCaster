@@ -86,7 +86,7 @@ public class InfobipProviderPlugin implements BroadcastProviderPlugin {
             return new SendMessageResponseDTO(true, MessageStatus.SENT, messageId, "Response: " + response.getBody());
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
             log.error("API Error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
-            return new SendMessageResponseDTO(false, MessageStatus.ERROR, null, e.getResponseBodyAsString());
+            return new SendMessageResponseDTO(false, MessageStatus.FAILED, null, e.getResponseBodyAsString());
         } catch (Exception e) {
             log.error("Failed to send Infobip message: ", e);
             return new SendMessageResponseDTO(false, MessageStatus.FAILED, null, e.getMessage());

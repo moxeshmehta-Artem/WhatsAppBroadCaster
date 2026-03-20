@@ -47,20 +47,17 @@ public class WebhookService {
     }
 
     private MessageStatus mapToEnum(String statusStr) {
-        if (statusStr == null) return MessageStatus.PENDING;
+        if (statusStr == null) return MessageStatus.SENT;
         
         String clean = statusStr.toUpperCase().trim();
         try {
             return MessageStatus.valueOf(clean);
         } catch (IllegalArgumentException e) {
-            // Map common provider variants to our enum
-            if (clean.contains("FAIL") || clean.contains("REJECTED")) return MessageStatus.FAILED;
-            if (clean.contains("ERROR")) return MessageStatus.ERROR;
-            if (clean.contains("DELIVERED")) return MessageStatus.DELIVERED;
-            if (clean.contains("READ")) return MessageStatus.READ;
-            if (clean.contains("SENT")) return MessageStatus.SENT;
-            
-            return MessageStatus.PENDING; // Fallback
+            // Map common provider variants to our simplified enum
+            if (clean.contains("FAIL") || clean.contains("REJECTED") || clean.contains("ERROR")) {
+                return MessageStatus.FAILED;
+            }
+            return MessageStatus.SENT; // Default: provider accepted it
         }
     }
 }

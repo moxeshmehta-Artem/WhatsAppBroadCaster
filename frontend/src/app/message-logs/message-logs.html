@@ -1,7 +1,7 @@
 <div class="logs-container">
-  
-  <!-- Toggle Switch -->
-  <div class="toggle-wrapper">
+
+  <!-- Header Bar -->
+  <div class="logs-header">
     <div class="toggle-buttons">
       <button [class.active]="isWhatsApp()" (click)="toggleView('whatsapp')">
         <span class="fa-brands fa-whatsapp"></span> WhatsApp Logs
@@ -10,48 +10,117 @@
         <span class="fa-solid fa-comment-sms"></span> SMS Logs
       </button>
     </div>
-    <button class="refresh-btn" (click)="refreshLogs()">
+    <div class="header-actions">
+      <div class="page-size-selector">
+        <label>Show</label>
+        <select [ngModel]="pageSize()" (ngModelChange)="changePageSize($event)">
+          <option [value]="10">10</option>
+          <option [value]="15">15</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+        </select>
+        <label>entries</label>
+      </div>
+      <button class="refresh-btn" (click)="refreshLogs()">
         <span class="fa-solid fa-rotate"></span> Refresh
-    </button>
+      </button>
+    </div>
   </div>
 
   @if (isWhatsApp()) {
     <div class="logs-card">
-      <h2>📟 WhatsApp Broadcast History</h2>
-      <table class="logs-table">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Recipient</th>
-            <th>Template</th>
-            <th>Provider</th>
-            <th>Status</th>
-            <th>Details/Error</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (log of whatsappLogs(); track log.id) {
+
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <span class="stats-text">
+          Showing <strong>{{ currentPage() * pageSize() + 1 }}</strong>
+          to <strong>{{ currentPage() * pageSize() + logs().length }}</strong>
+          of <strong>{{ totalItems() }}</strong> logs
+        </span>
+      </div>
+
+      <!-- Loading Overlay -->
+      @if (loading()) {
+        <div class="loading-overlay">
+          <div class="spinner"></div>
+          <span>Loading logs...</span>
+        </div>
+      }
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="logs-table">
+          <thead>
             <tr>
-              <td>{{ log.timestamp | date:'short' }}</td>
-              <td><strong>{{ log.mobileNo }}</strong></td>
-              <td>{{ log.template }}</td>
-              <td>{{ log.provider }}</td>
-              <td>
-                <span class="badge" [ngClass]="getStatusClass(log.status)">
-                  {{ log.status }}
-                </span>
-              </td>
-              <td class="error-msg">{{ log.errorMessage }}</td>
+              <th>#</th>
+              <th>Timestamp</th>
+              <th>Recipient</th>
+              <th>Template</th>
+              <th>Provider</th>
+              <th>Status</th>
+              <th>Details / Error</th>
             </tr>
+          </thead>
+          <tbody>
+            @for (log of logs(); track log.id; let i = $index) {
+              <tr>
+                <td class="row-num">{{ currentPage() * pageSize() + i + 1 }}</td>
+                <td>{{ log.timestamp | date:'dd MMM yyyy, hh:mm a' }}</td>
+                <td><strong>{{ log.mobileNo }}</strong></td>
+                <td>{{ log.template }}</td>
+                <td>
+                  <span class="provider-chip">{{ log.provider }}</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(log.status)">
+                    {{ log.status }}
+                  </span>
+                </td>
+                <td class="error-msg">{{ log.errorMessage }}</td>
+              </tr>
+            }
+            @if (logs().length === 0 && !loading()) {
+              <tr>
+                <td colspan="7" class="empty-row">
+                  <span class="fa-solid fa-inbox"></span>
+                  No logs found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div class="pagination-bar">
+          <button class="page-btn" [disabled]="currentPage() === 0" (click)="goToPage(0)">
+            <span class="fa-solid fa-angles-left"></span>
+          </button>
+          <button class="page-btn" [disabled]="currentPage() === 0" (click)="goToPage(currentPage() - 1)">
+            <span class="fa-solid fa-angle-left"></span>
+          </button>
+
+          @for (p of getPageNumbers(); track p) {
+            <button class="page-btn" [class.active]="p === currentPage()" (click)="goToPage(p)">
+              {{ p + 1 }}
+            </button>
           }
-        </tbody>
-      </table>
+
+          <button class="page-btn" [disabled]="currentPage() === totalPages() - 1" (click)="goToPage(currentPage() + 1)">
+            <span class="fa-solid fa-angle-right"></span>
+          </button>
+          <button class="page-btn" [disabled]="currentPage() === totalPages() - 1" (click)="goToPage(totalPages() - 1)">
+            <span class="fa-solid fa-angles-right"></span>
+          </button>
+        </div>
+      }
     </div>
   } @else {
     <div class="logs-card placeholder-card">
       <span class="fa-solid fa-clock-rotate-left"></span>
       <h3>SMS Logs Coming Soon</h3>
-      <p>This feature is currently under development to support GSM Gateways.</p>
+      <p>This feature is currently under development.</p>
     </div>
   }
 

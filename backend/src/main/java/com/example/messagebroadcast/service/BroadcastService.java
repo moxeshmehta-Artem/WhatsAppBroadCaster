@@ -144,7 +144,7 @@ public class BroadcastService {
                 logBatch.add(messageLog);
 
                 // Track success/failure for the response
-                if (response.getStatus() == MessageStatus.FAILED || response.getStatus() == MessageStatus.ERROR) {
+                if (response.getStatus() == MessageStatus.FAILED) {
                     failedCount++;
                 } else {
                     successCount++;
